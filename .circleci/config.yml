@@ -41,11 +41,14 @@ jobs:
             # Example:
             # ./deploy.sh
       - run:
-          name: Start Application on Port 84
+          name: Start Application and Serve index.html on Port 84
           command: |
-            echo "Starting application on port 84..."
-            # Assuming your application start command is npm start or a similar script
-            npm start -- --port 84 || true
+            echo "Starting application and serving index.html on port 84..."
+            # Assuming you are using a simple HTTP server to serve index.html
+            # Install a simple HTTP server if not already installed
+            npm install -g http-server || true
+            # Serve the index.html on port 84
+            http-server -p 84 -c-1 || true
 
 workflows:
   version: 2
