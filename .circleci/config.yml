@@ -30,16 +30,15 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/node:14.17
     steps:
       - checkout
       - run:
           name: Deploy Application
           command: |
             echo "Deploying application..."
-            # Add your deployment commands here
-            # Example:
-            # ./deploy.sh
+            # Command to run the application on port 84
+            PORT=84 npm start
 
 workflows:
   version: 2
