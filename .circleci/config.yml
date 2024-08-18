@@ -34,21 +34,32 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Deploy Application
+          name: Install Nginx
           command: |
-            echo "Deploying application..."
-            # Add your deployment commands here
-            # Example:
-            # ./deploy.sh
+            sudo apt-get update
+            sudo apt-get install -y nginx
       - run:
-          name: Start Application and Serve index.html on Port 84
+          name: Configure Nginx
           command: |
-            echo "Starting application and serving index.html on port 84..."
-            # Assuming you are using a simple HTTP server to serve index.html
-            # Install a simple HTTP server if not already installed
-            npm install -g http-server || true
-            # Serve the index.html on port 84
-            http-server -p 84 -c-1 || true
+            sudo rm /etc/nginx/sites-enabled/default
+            echo 'server {
+              listen 84;
+              root /var/www/html;
+              index index.html;
+              location / {
+                try_files $uri $uri/ =404;
+              }
+            }' | sudo tee /etc/nginx/sites-available/default
+      - run:
+          name: Copy index.html to Nginx directory
+          command: |
+            sudo mkdir -p /var/www/html
+            sudo cp index.html /var/www/html/
+      - run:
+          name: Start Nginx
+          command: |
+            sudo service nginx restart
+            curl -I http://localhost:84 || true
 
 workflows:
   version: 2
