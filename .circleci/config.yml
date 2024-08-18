@@ -30,21 +30,16 @@ jobs:
 
   deploy:
     docker:
-      - image: nginx:latest
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
-          name: Copy index.html to Nginx directory
+          name: Deploy Application
           command: |
-            echo "Starting deployment..."
-            mkdir -p /usr/share/nginx/html
-            cp index.html /usr/share/nginx/html/
-      - run:
-          name: Start Nginx
-          command: |
-            nginx -g 'daemon off;' & # Start Nginx in the background
-            sleep 10 # Give Nginx some time to start up
-            curl -I http://localhost:84 || true
+            echo "Deploying application..."
+            # Add your deployment commands here
+            # Example:
+            # ./deploy.sh
 
 workflows:
   version: 2
