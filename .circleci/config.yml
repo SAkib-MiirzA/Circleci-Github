@@ -1,20 +1,61 @@
 version: 2.1
 
 jobs:
+  build:
+    docker:
+      - image: circleci/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            set -o pipefail
+            npm install || true
+      - run:
+          name: Run tests
+          command: |
+            set -o pipefail
+            npm test || true
+
+  test:
+    docker:
+      - image: circleci/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Run additional tests
+          command: |
+            set -o pipefail
+            npm run additional-tests || true
+
   deploy:
     docker:
-      - image: circleci/python:3.8 # Using Python to serve the HTML file
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
           name: Deploy Application
           command: |
-            echo "Deploying index.html on localhost:85..."
-            cd repo-folder # Navigate to the folder where your index.html is located
-            python -m http.server 85
+            echo "Deploying application..."
+            # Add your deployment commands here
+            # Example:
+            # ./deploy.sh
+      - run:
+          name: Start Application on Port 84
+          command: |
+            echo "Starting application on port 84..."
+            # Assuming your application start command is npm start or a similar script
+            npm start -- --port 84 || true
 
 workflows:
   version: 2
-  build_deploy:
+  build_deploy_test:
     jobs:
-      - deploy
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - build
+            - test
