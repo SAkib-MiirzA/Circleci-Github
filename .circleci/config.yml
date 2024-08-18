@@ -1,35 +1,20 @@
 version: 2.1
 
 jobs:
-  build:
-    docker:
-      - image: circleci/node:14.17 # If you're using Node.js
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies (Optional)
-          command: |
-            echo "No package.json file, skipping npm install."
-            # Uncomment the next line if you do have a package.json in the future
-            # npm install || true
-
   deploy:
     docker:
-      - image: circleci/node:14.17 # Use the appropriate Docker image for your environment
+      - image: circleci/python:3.8 # Using Python to serve the HTML file
     steps:
       - checkout
       - run:
           name: Deploy Application
           command: |
-            echo "Deploying application on localhost:85..."
-            # Replace this with the command to start your server on port 85
-            node index.js --port 85
+            echo "Deploying index.html on localhost:85..."
+            cd repo-folder # Navigate to the folder where your index.html is located
+            python -m http.server 85
 
 workflows:
   version: 2
   build_deploy:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - deploy
