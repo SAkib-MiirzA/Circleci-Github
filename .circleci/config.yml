@@ -30,35 +30,20 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/nginx:latest
     steps:
       - checkout
       - run:
-          name: Install Nginx
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y nginx
-      - run:
-          name: Configure Nginx
-          command: |
-            sudo rm /etc/nginx/sites-enabled/default
-            echo 'server {
-              listen 84;
-              root /var/www/html;
-              index index.html;
-              location / {
-                try_files $uri $uri/ =404;
-              }
-            }' | sudo tee /etc/nginx/sites-available/default
-      - run:
           name: Copy index.html to Nginx directory
           command: |
-            sudo mkdir -p /var/www/html
-            sudo cp index.html /var/www/html/
+            echo "Starting deployment..."
+            mkdir -p /usr/share/nginx/html
+            cp index.html /usr/share/nginx/html/
       - run:
           name: Start Nginx
           command: |
-            sudo service nginx restart
+            nginx -g 'daemon off;' & # Start Nginx in the background
+            sleep 10 # Give Nginx some time to start up
             curl -I http://localhost:84 || true
 
 workflows:
