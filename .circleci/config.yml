@@ -30,7 +30,7 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/nginx:latest
+      - image: nginx:latest
     steps:
       - checkout
       - run:
